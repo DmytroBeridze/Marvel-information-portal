@@ -10,12 +10,18 @@ export default class MarvelService {
     return await response.json();
   };
 
-  getAllCharacters = async () => {
+  // getAllCharacters = async () => {
+  //   const res = await this.getResource(
+  //     `${this._host}characters?limit=9&offset=210&apikey=${this._apiKey}`
+  //   );
+
+  //   return res.data.results.map((elem) => this._transformCharacter(elem));
+  // };
+  getAllCharacters = async (offset = 210) => {
     const res = await this.getResource(
-      `${this._host}characters?limit=9&offset=210&apikey=${this._apiKey}`
+      `${this._host}characters?limit=9&offset=${offset}&apikey=${this._apiKey}`
     );
-    // console.log(res.data.results);
-    // res.data.results.map((elem) => console.log(elem));
+
     return res.data.results.map((elem) => this._transformCharacter(elem));
   };
 
@@ -37,6 +43,7 @@ export default class MarvelService {
   // };
 
   getCharacter = async (id) => {
+   
     const resource = await this.getResource(
       `${this._host}characters/${id}?apikey=${this._apiKey}`
     );
@@ -52,6 +59,8 @@ export default class MarvelService {
       thumbnail: res.thumbnail.path + "." + res.thumbnail.extension,
       homepage: res.urls[0].url,
       wiki: res.urls[1].url,
+      id: res.id,
+      comicsList: res.comics.items,
     };
   };
 }

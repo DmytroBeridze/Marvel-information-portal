@@ -7,6 +7,7 @@ const Loader = () => {
       width="64px"
       height="64px"
       viewBox="0 0 128 128"
+      display="block"
     >
       <g>
         <path
