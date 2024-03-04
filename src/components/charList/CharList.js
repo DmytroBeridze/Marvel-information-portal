@@ -101,7 +101,7 @@ class CharList extends React.Component {
   };
 
   render() {
-    console.log(this.state.char);
+    // console.log(this.state.char);
     const { error, spinner, char, offset, loading, charEned } = this.state;
     const err = error ? <ErrorMessage /> : null;
     const load = spinner ? <Loader /> : null;
