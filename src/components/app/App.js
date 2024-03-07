@@ -6,6 +6,7 @@ import CharInfo from "../charInfo/CharInfo";
 import decoration from "../../resources/img/vision.png";
 import React, { useState } from "react";
 import ErrorBoundary from "../errorBoundary/ErrorBoundary";
+import ComicsList from "../comicsList/ComicsList";
 
 const App = () => {
   const [charId, setCharId] = useState(null);
@@ -25,6 +26,7 @@ const App = () => {
           </ErrorBoundary>
         </div>
         <img className="bg-decoration" src={decoration} alt="vision" />
+        <ComicsList />
       </main>
     </div>
   );
