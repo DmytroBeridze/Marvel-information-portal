@@ -7,39 +7,19 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 
 const RandomChar = () => {
   const [char, setChar] = useState({});
-  const [loader, setLoader] = useState(true);
-  const [error, setError] = useState(false);
-  // const [imageStyle, setImageStyle] = useState("cover");
+  const { loader, error, clearError, getCharacter } = MarvelService();
 
   useEffect(() => {
     updateCharacter();
   }, []);
 
-  const onError = (err) => {
-    setLoader(false);
-    setError(true);
-  };
-
-  const marvelService = new MarvelService();
-
-  const onCharLoaded = (char) => {
-    setChar(char);
-    setLoader(false);
-  };
-  // для отображения спиннера при нажатии на кнопку TRY IT
-  const onCharLoading = () => {
-    setLoader(true);
-  };
-
   const updateCharacter = () => {
-    onCharLoading();
+    clearError();
     const randomId = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    marvelService
-      .getCharacter(randomId)
-      .then((res) => {
-        onCharLoaded(res);
-      })
-      .catch(() => onError());
+    getCharacter(randomId).then((char) => oncharLoaded(char));
+  };
+  const oncharLoaded = (char) => {
+    setChar(char);
   };
 
   const errorMessage = error ? <ErrorMessage /> : null;
@@ -73,7 +53,10 @@ const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
 
   const imgStyle = () => {
-    if (thumbnail.includes("image_not_available")) {
+    if (
+      thumbnail ===
+      "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
+    ) {
       return "contain";
     } else return "cover";
   };
