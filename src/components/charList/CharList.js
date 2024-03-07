@@ -7,28 +7,18 @@ import PropTypes from "prop-types";
 
 const CharList = ({ getCharId }) => {
   const [char, setChar] = useState([]);
-  const [error, setError] = useState(false);
-  const [spinner, setSpinner] = useState(true);
   const [offset, setOffset] = useState(210);
   const [loading, setLoading] = useState(false);
   const [charEned, setCharEned] = useState(false);
-
-  const marvelService = new MarvelService();
+  const { loader, error, clearError, getAllCharacters } = MarvelService();
 
   useEffect(() => {
-    onLoadCharacters();
+    onLoadCharacters(offset, true);
   }, []);
 
-  const onCharLoading = () => {
-    setLoading(true);
-  };
-
-  const onLoadCharacters = (offset) => {
-    onCharLoading();
-    marvelService
-      .getAllCharacters(offset)
-      .then((char) => onCharLoaded(char))
-      .catch(onError);
+  const onLoadCharacters = (offset, inst) => {
+    inst ? setLoading(false) : setLoading(true);
+    getAllCharacters(offset).then((char) => onCharLoaded(char));
   };
 
   const onCharLoaded = (newChar) => {
@@ -36,17 +26,10 @@ const CharList = ({ getCharId }) => {
     if (newChar.length < 9) {
       ended = true;
     }
-
     setChar((char) => [...char, ...newChar]);
-    setSpinner(false);
     setOffset((offset) => offset + 9);
     setLoading(false);
     setCharEned(ended);
-  };
-
-  const onError = () => {
-    setError(true);
-    setSpinner(false);
   };
 
   const arrRef = useRef([]);
@@ -92,7 +75,7 @@ const CharList = ({ getCharId }) => {
   };
 
   const err = error ? <ErrorMessage /> : null;
-  const load = spinner ? <Loader /> : null;
+  const load = loader && !loading ? <Loader /> : null;
   const content = !(err || load) ? renderCard(char) : null;
   return (
     <div

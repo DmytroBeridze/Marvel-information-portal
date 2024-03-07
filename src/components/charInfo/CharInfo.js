@@ -8,10 +8,7 @@ import PropTypes from "prop-types";
 
 const CharInfo = ({ charId }) => {
   const [char, setChar] = useState(null);
-  const [error, setError] = useState(false);
-  const [spinner, setSpinner] = useState(false);
-
-  const marvelService = new MarvelService();
+  const { loader, error, clearError, getCharacter } = MarvelService();
 
   useEffect(() => {
     updateChar();
@@ -25,35 +22,23 @@ const CharInfo = ({ charId }) => {
     if (!charId) {
       return;
     }
-    loading();
-    marvelService
-      .getCharacter(charId)
-      .then((char) => changeCharacter(char))
-      .catch(loadError);
+
+    getCharacter(charId).then((char) => changeCharacter(char));
   };
 
   const changeCharacter = (char) => {
     setChar(char);
-    setSpinner(false);
   };
 
-  const loadError = () => {
-    setError(true);
-    setSpinner(false);
-  };
-  const loading = () => {
-    setSpinner(true);
-  };
-
-  const skeleton = error || spinner || char ? null : <Skeleton />;
+  const skeleton = error || loader || char ? null : <Skeleton />;
   const err = error ? <ErrorMessage /> : null;
-  const loader = spinner ? <Loader /> : null;
-  const content = !(spinner || error || !char) ? <View char={char} /> : null;
+  const spinner = loader ? <Loader /> : null;
+  const content = !(loader || error || !char) ? <View char={char} /> : null;
 
   return (
     <div className="char__info">
       {err}
-      {loader}
+      {spinner}
       {skeleton}
       {content}
     </div>
