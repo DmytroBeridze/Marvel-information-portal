@@ -21,7 +21,7 @@ const MarvelService = () => {
   };
 
   const getComics = async (offset = 210) => {
-    console.log(offset);
+    // console.log(offset);
     const response = await request(
       `${_host}/comics?limit=8&offset=${offset}&apikey=${_apiKey}`
     );
@@ -34,7 +34,7 @@ const MarvelService = () => {
       title: title,
       thumbnail: thumbnail.path + "." + thumbnail.extension,
       id: id,
-      price: prices[0].price,
+      price: prices[0].price || " No available",
       url: urls[0].url,
     };
   };

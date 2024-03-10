@@ -1,6 +1,4 @@
 import "./comicsList.scss";
-import uw from "../../resources/img/UW.png";
-import xMen from "../../resources/img/x-men.png";
 import { useEffect, useState } from "react";
 import MarvelService from "../services/MarvelService";
 import Loader from "../loader/Loader";
@@ -9,7 +7,9 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 const ComicsList = () => {
   const [char, setChar] = useState([]);
   const [offset, setOffset] = useState(210);
+  // const [offset, setOffset] = useState(59423);
   const [newLoading, setNewLoading] = useState(false);
+  const [comicsEnded, setcomicsEnded] = useState(false);
   const { loader, error, clearError, getComics } = MarvelService();
 
   useEffect(() => {
@@ -24,9 +24,15 @@ const ComicsList = () => {
   };
 
   const setCharState = (comics) => {
+    // let ended = false;
+    // if (comics.length < 8) {
+    //   ended = true;
+    // }
+
     setChar((char) => [...char, ...comics]);
-    setOffset((offset) => offset + 9);
+    setOffset((offset) => offset + 8);
     setNewLoading(false);
+    comics.length < 8 ? setcomicsEnded(true) : setcomicsEnded(false);
   };
 
   const comicsElement = () => {
@@ -48,14 +54,15 @@ const ComicsList = () => {
   const errorLoading = error ? <ErrorMessage /> : null;
   const spinner = loader && !newLoading ? <Loader /> : null;
   const content = comicsElement();
+
   return (
     <div className="comics__list">
-      {/* <ul className="comics__grid"> */}
       {errorLoading}
       {spinner}
       {content}
-      {/* </ul> */}
+
       <button
+        style={{ display: comicsEnded ? "none" : "block" }}
         disabled={newLoading ? true : false}
         className="button button__main button__long"
         onClick={() => onLoadCharacters(offset)}
