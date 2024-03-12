@@ -21,19 +21,36 @@ const MarvelService = () => {
   };
 
   const getComics = async (offset = 210) => {
-    // console.log(offset);
     const response = await request(
       `${_host}/comics?limit=8&offset=${offset}&apikey=${_apiKey}`
     );
-
     return response.data.results.map((res) => _transformComics(res));
   };
+
+  const getComic = async (comicId) => {
+    const response = await request(
+      `${_host}comics/${comicId}?apikey=${_apiKey}`
+    );
+    // console.log(response);
+    return _transformComics(response.data.results[0]);
+  };
   const _transformComics = (res) => {
-    const { id, title, thumbnail, prices, urls } = res;
+    const {
+      id,
+      title,
+      thumbnail,
+      prices,
+      urls,
+      description,
+      pageCount,
+      language,
+    } = res;
     return {
-      title: title,
+      title,
+      description,
       thumbnail: thumbnail.path + "." + thumbnail.extension,
-      id: id,
+      id,
+      pageCount,
       price: prices[0].price || " No available",
       url: urls[0].url,
     };
@@ -59,6 +76,7 @@ const MarvelService = () => {
     getAllCharacters,
     getCharacter,
     getComics,
+    getComic,
   };
 };
 export default MarvelService;

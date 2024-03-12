@@ -26,7 +26,10 @@ const AppHeader = () => {
           /
           <li>
             <NavLink
-              end
+              /* Убираем end чтоб все дочерние страницы после /comics сравнивались
+             не строго и подкрашивались красным */
+
+              // end
               to="/comics"
               style={({ isActive }) => ({
                 color: isActive ? "#9F0013" : "inherit",

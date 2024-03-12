@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import MarvelService from "../services/MarvelService";
 import Loader from "../loader/Loader";
 import ErrorMessage from "../errorMessage/ErrorMessage";
+import { Link } from "react-router-dom";
 
 const ComicsList = () => {
   const [char, setChar] = useState([]);
@@ -38,14 +39,22 @@ const ComicsList = () => {
   const comicsElement = () => {
     const element = char.map((comics, i) => {
       const { id, price, thumbnail, title, url } = comics;
+
       return (
         <li className="comics__item" key={id + i}>
-          <a href={url}>
+          <Link to={`/comics/${id}`}>
             <img src={thumbnail} alt={title} className="comics__item-img" />
             <div className="comics__item-name">${title}</div>
             <div className="comics__item-price">${price}</div>
-          </a>
+          </Link>
         </li>
+        // <li className="comics__item" key={id + i}>
+        //   <a href={url}>
+        //     <img src={thumbnail} alt={title} className="comics__item-img" />
+        //     <div className="comics__item-name">${title}</div>
+        //     <div className="comics__item-price">${price}</div>
+        //   </a>
+        // </li>
       );
     });
     return <ul className="comics__grid">{element}</ul>;

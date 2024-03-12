@@ -42,7 +42,6 @@ const CharList = ({ getCharId }) => {
     arrRef.current[i].classList.add("char__item_selected");
   };
 
-  console.log("Render");
   const renderCard = (arr) => {
     const card = arr.map((elem, i) => {
       let imgStyle =
