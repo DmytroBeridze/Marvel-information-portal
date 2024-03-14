@@ -5,6 +5,7 @@ import ErrorMessage from "../errorMessage/ErrorMessage";
 import Loader from "../loader/Loader";
 import Skeleton from "../skeleton/Skeleton";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 const CharInfo = ({ charId }) => {
   const [char, setChar] = useState(null);
@@ -47,11 +48,30 @@ const CharInfo = ({ charId }) => {
 
 const View = ({ char }) => {
   const { name, thumbnail, wiki, homepage, description, comicsList } = char;
+
   let imgStyle =
     thumbnail ===
     "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg"
       ? { objectFit: "contain" }
       : { objectFit: "fill" };
+
+  // comics list element
+  const listElem = () => {
+    return comicsList.map((elem, id) => {
+      const comicLink =
+        elem.resourceURI.split("/")[elem.resourceURI.split("/").length - 1];
+      if (id > 9) return;
+      return (
+        <Link to={`comics/${comicLink}`} className="char__comics-item" key={id}>
+          {elem.name}
+        </Link>
+      );
+    });
+  };
+  // no comics
+  const noComics = () => {
+    return comicsList.length > 0 ? null : "There is no comics";
+  };
 
   return (
     <>
@@ -72,15 +92,23 @@ const View = ({ char }) => {
       <div className="char__descr">{description}</div>
       <div className="char__comics">Comics:</div>
       <ul className="char__comics-list">
-        {comicsList.length > 0 ? null : "There is no comics"}
-        {comicsList.map((elem, id) => {
+        {listElem()}
+        {noComics()}
+        {/* {comicsList.length > 0 ? null : "There is no comics"} */}
+        {/* {comicsList.map((elem, id) => {
+          const comicLink =
+            elem.resourceURI.split("/")[elem.resourceURI.split("/").length - 1];
           if (id > 9) return;
           return (
-            <li className="char__comics-item" key={id}>
+            <Link
+              to={`comics/${comicLink}`}
+              className="char__comics-item"
+              key={id}
+            >
               {elem.name}
-            </li>
+            </Link>
           );
-        })}
+        })} */}
       </ul>
     </>
   );

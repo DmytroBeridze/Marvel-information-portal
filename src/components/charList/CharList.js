@@ -36,7 +36,6 @@ const CharList = ({ getCharId }) => {
 
   const addStyle = (i) => {
     arrRef.current.forEach((elem) => {
-      console.log(i);
       elem.classList.remove("char__item_selected");
     });
     arrRef.current[i].classList.add("char__item_selected");
@@ -77,6 +76,7 @@ const CharList = ({ getCharId }) => {
   const err = error ? <ErrorMessage /> : null;
   const load = loader && !loading ? <Loader /> : null;
   const content = !(err || load) ? renderCard(char) : null;
+
   return (
     <div
       className="char__list"

@@ -1,7 +1,9 @@
 import ErrorMessage from "../errorMessage/ErrorMessage";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const NoMatch = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <ErrorMessage />
@@ -9,10 +11,10 @@ const NoMatch = () => {
         Page does not exist
       </p>
       <Link
-        to="/"
+        to={navigate(-1)}
         style={{ display: "block", margin: "20px auto", textAlign: "center" }}
       >
-        Return to main page
+        Go back
       </Link>
     </>
   );
