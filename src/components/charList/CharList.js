@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Loader from "../loader/Loader";
 import PropTypes from "prop-types";
+import { CSSTransition } from "react-transition-group";
 
 const CharList = ({ getCharId }) => {
   const [char, setChar] = useState([]);
@@ -11,6 +12,8 @@ const CharList = ({ getCharId }) => {
   const [loading, setLoading] = useState(false);
   const [charEned, setCharEned] = useState(false);
   const { loader, error, clearError, getAllCharacters } = MarvelService();
+  const [trans, setTrans] = useState(false);
+  const nodeRef = useRef(null);
 
   useEffect(() => {
     onLoadCharacters(offset, true);
@@ -75,29 +78,44 @@ const CharList = ({ getCharId }) => {
 
   const err = error ? <ErrorMessage /> : null;
   const load = loader && !loading ? <Loader /> : null;
-  const content = !(err || load) ? renderCard(char) : null;
+  // const content = !(err || load) ? renderCard(char) : null;
+  // const content = !(err || load) ? true : false;
 
   return (
-    <div
-      className="char__list"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      {err}
-      {load}
-      {content}
-      <button
-        className="button button__main button__long"
-        onClick={() => onLoadCharacters(offset)}
-        disabled={loading}
-        style={{ display: charEned ? "none" : "block" }}
-      >
-        <div className="inner">load more</div>
-      </button>
-    </div>
+    <>
+      <div>
+        <CSSTransition
+          nodeRef={nodeRef}
+          in={!(err || load)}
+          timeout={400}
+          classNames="my-node"
+        >
+          <div ref={nodeRef}>
+            {/* ----------------------------- */}
+            <div
+              className="char__list"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {err}
+              {load}
+              {renderCard(char)}
+              <button
+                className="button button__main button__long"
+                onClick={() => onLoadCharacters(offset)}
+                disabled={loading}
+                style={{ display: charEned ? "none" : "block" }}
+              >
+                <div className="inner">load more</div>
+              </button>
+            </div>
+          </div>
+        </CSSTransition>
+      </div>
+    </>
   );
 };
 
