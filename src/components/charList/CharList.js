@@ -1,7 +1,7 @@
 import "./charList.scss";
 import abyss from "../../resources/img/abyss.jpg";
 import MarvelService from "../services/MarvelService";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Loader from "../loader/Loader";
 import PropTypes from "prop-types";
@@ -97,40 +97,35 @@ const CharList = ({ getCharId }) => {
     );
   };
 
-  render() {
-    console.log(this.state.char);
-    const { error, spinner, char, offset, loading, charEned } = this.state;
-    const err = error ? <ErrorMessage /> : null;
-    const load = spinner ? <Loader /> : null;
-    const content = !(err || load) ? this.renderCard(char) : null;
-    return (
-      <div
-        className="char__list"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
+  const err = error ? <ErrorMessage /> : null;
+  const load = spinner ? <Loader /> : null;
+  const content = !(err || load) ? this.renderCard(char) : null;
+  return (
+    <div
+      className="char__list"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      {err}
+      {load}
+      {content}
+      <button
+        className="button button__main button__long"
+        onClick={() => this.onLoadCharacters(offset)}
+        disabled={loading}
+        style={{ display: charEned ? "none" : "block" }}
       >
-        {err}
-        {load}
-        {content}
-        <button
-          className="button button__main button__long"
-          onClick={() => this.onLoadCharacters(offset)}
-          disabled={loading}
-          style={{ display: charEned ? "none" : "block" }}
-        >
-          <div className="inner">load more</div>
-        </button>
-      </div>
-    );
-  }
-}
+        <div className="inner">load more</div>
+      </button>
+    </div>
+  );
+};
 
 CharList.propTypes = {
   getCharId: PropTypes.func,
 };
 
 export default CharList;
-
