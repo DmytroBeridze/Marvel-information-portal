@@ -5,37 +5,27 @@ import React from "react";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Loader from "../loader/Loader";
 import PropTypes from "prop-types";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-class CharList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      char: [],
-      error: false,
-      spinner: true,
-      // offset: 1548,
-      offset: 210,
-      loading: false,
-      charEned: false,
-    };
-  }
+const CharList = ({ getCharId }) => {
+  const [char, setChar] = useState([]);
+  const [offset, setOffset] = useState(210);
+  const [loading, setLoading] = useState(false);
+  const [charEned, setCharEned] = useState(false);
+  const { loader, error, clearError, getAllCharacters } = MarvelService();
 
-  marvelService = new MarvelService();
+  const nodeRef = useRef(null);
 
-  componentDidMount() {
-    this.onLoadCharacters();
-  }
+  useEffect(() => {
+    onLoadCharacters(offset, true);
+  }, []);
 
-  onCharLoading = () => {
-    this.setState({ loading: true });
-  };
-
-  onLoadCharacters = (offset) => {
-    this.onCharLoading();
-    this.marvelService
-      .getAllCharacters(offset)
-      .then((char) => this.onCharLoaded(char))
-      .catch(this.onError);
+  const onLoadCharacters = (offset, inst) => {
+    inst ? setLoading(false) : setLoading(true);
+    getAllCharacters(offset).then((char) => {
+      onCharLoaded(char);
+      console.log(char);
+    });
   };
 
   onCharLoaded = (newChar) => {
@@ -76,28 +66,35 @@ class CharList extends React.Component {
           ? { objectFit: "unset" }
           : { objectFit: "cover" };
       return (
-        <li
-          className="char__item"
-          key={elem.id}
-          ref={this.getReffs}
-          onClick={(e) => {
-            this.props.getCharId(elem.id);
-            this.addStyle(i);
-          }}
-          tabIndex={1}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              this.props.getCharId(elem.id);
-              this.addStyle(i);
-            }
-          }}
-        >
-          <img src={elem.thumbnail} alt="abyss" style={imgStyle} />
-          <div className="char__name">{elem.name}</div>
-        </li>
+        // transition group
+        <CSSTransition key={elem.id} timeout={500} classNames="char__item">
+          <li
+            className="char__item"
+            key={elem.id}
+            ref={(elem) => (arrRef.current[i] = elem)}
+            onClick={(e) => {
+              getCharId(elem.id);
+              addStyle(i);
+            }}
+            tabIndex={1}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                getCharId(elem.id);
+                addStyle(i);
+              }
+            }}
+          >
+            <img src={elem.thumbnail} alt="abyss" style={imgStyle} />
+            <div className="char__name">{elem.name}</div>
+          </li>
+        </CSSTransition>
       );
     });
-    return <ul className="char__grid">{card}</ul>;
+    return (
+      <ul className="char__grid">
+        <TransitionGroup component={null}>{card}</TransitionGroup>
+      </ul>
+    );
   };
 
   render() {
@@ -136,3 +133,4 @@ CharList.propTypes = {
 };
 
 export default CharList;
+
