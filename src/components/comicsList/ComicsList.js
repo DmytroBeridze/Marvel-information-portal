@@ -48,13 +48,6 @@ const ComicsList = () => {
             <div className="comics__item-price">${price}</div>
           </Link>
         </li>
-        // <li className="comics__item" key={id + i}>
-        //   <a href={url}>
-        //     <img src={thumbnail} alt={title} className="comics__item-img" />
-        //     <div className="comics__item-name">${title}</div>
-        //     <div className="comics__item-price">${price}</div>
-        //   </a>
-        // </li>
       );
     });
     return <ul className="comics__grid">{element}</ul>;

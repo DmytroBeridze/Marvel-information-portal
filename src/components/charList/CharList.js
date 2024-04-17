@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Loader from "../loader/Loader";
 import PropTypes from "prop-types";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 const CharList = ({ getCharId }) => {
   const [char, setChar] = useState([]);
@@ -12,13 +13,18 @@ const CharList = ({ getCharId }) => {
   const [charEned, setCharEned] = useState(false);
   const { loader, error, clearError, getAllCharacters } = MarvelService();
 
+  const nodeRef = useRef(null);
+
   useEffect(() => {
     onLoadCharacters(offset, true);
   }, []);
 
   const onLoadCharacters = (offset, inst) => {
     inst ? setLoading(false) : setLoading(true);
-    getAllCharacters(offset).then((char) => onCharLoaded(char));
+    getAllCharacters(offset).then((char) => {
+      onCharLoaded(char);
+      console.log(char);
+    });
   };
 
   const onCharLoaded = (newChar) => {
@@ -49,28 +55,35 @@ const CharList = ({ getCharId }) => {
           ? { objectFit: "unset" }
           : { objectFit: "cover" };
       return (
-        <li
-          className="char__item"
-          key={elem.id}
-          ref={(elem) => (arrRef.current[i] = elem)}
-          onClick={(e) => {
-            getCharId(elem.id);
-            addStyle(i);
-          }}
-          tabIndex={1}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
+        // transition group
+        <CSSTransition key={elem.id} timeout={500} classNames="char__item">
+          <li
+            className="char__item"
+            key={elem.id}
+            ref={(elem) => (arrRef.current[i] = elem)}
+            onClick={(e) => {
               getCharId(elem.id);
               addStyle(i);
-            }
-          }}
-        >
-          <img src={elem.thumbnail} alt="abyss" style={imgStyle} />
-          <div className="char__name">{elem.name}</div>
-        </li>
+            }}
+            tabIndex={1}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                getCharId(elem.id);
+                addStyle(i);
+              }
+            }}
+          >
+            <img src={elem.thumbnail} alt="abyss" style={imgStyle} />
+            <div className="char__name">{elem.name}</div>
+          </li>
+        </CSSTransition>
       );
     });
-    return <ul className="char__grid">{card}</ul>;
+    return (
+      <ul className="char__grid">
+        <TransitionGroup component={null}>{card}</TransitionGroup>
+      </ul>
+    );
   };
 
   const err = error ? <ErrorMessage /> : null;
