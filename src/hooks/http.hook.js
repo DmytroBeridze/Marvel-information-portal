@@ -3,6 +3,8 @@ import { useCallback, useState } from "react";
 const useHttp = () => {
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState(null);
+  // Finite-State Mashine
+  const [process, setProcess] = useState("waiting");
 
   const request = useCallback(
     async (
@@ -12,6 +14,7 @@ const useHttp = () => {
       body = null
     ) => {
       setLoader(true);
+      setProcess("loading");
       try {
         const response = await fetch(url, {
           method,
@@ -23,16 +26,20 @@ const useHttp = () => {
         }
         const data = await response.json();
         setLoader(false);
+        // Так як фсинхронно приходять дані, setProcess
+        // встановлено в Charinfo.js
+        // setProcess("ready");
         return data;
       } catch (error) {
         setError(error.message);
         setLoader(false);
+        setProcess("error");
         throw error;
       }
     },
     []
   );
   const clearError = useCallback(() => setError(false), []);
-  return { request, loader, error, clearError };
+  return { request, loader, error, clearError, process, setProcess };
 };
 export default useHttp;

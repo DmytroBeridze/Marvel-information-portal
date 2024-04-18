@@ -6,12 +6,35 @@ import Loader from "../loader/Loader";
 import PropTypes from "prop-types";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
+// import finiteStateMashine from "../../utils/finiteStateMashine";
+
+//  Ініціалізуємо finiteStateMashine тут, а не в finiteStateMashine.js, тому що
+//  в цьому модулі дещо інша логіка (спіннер з'являється тільки при першому
+//  завантаженні, за це відповідає - const [loading, setLoading] = useState(false);)
+const finiteStateMashine = (state, loading, Component) => {
+  switch (state) {
+    case "waiting":
+      return <Loader />;
+    case "loading":
+      return loading ? <Component /> : <Loader />;
+    case "error":
+      return <ErrorMessage />;
+    case "ready":
+      return <Component />;
+
+    default:
+      throw new Error("Wrong state");
+  }
+};
+
 const CharList = ({ getCharId }) => {
   const [char, setChar] = useState([]);
   const [offset, setOffset] = useState(210);
   const [loading, setLoading] = useState(false);
   const [charEned, setCharEned] = useState(false);
-  const { loader, error, clearError, getAllCharacters } = MarvelService();
+
+  const { loader, error, clearError, getAllCharacters, process, setProcess } =
+    MarvelService();
 
   const nodeRef = useRef(null);
 
@@ -21,10 +44,11 @@ const CharList = ({ getCharId }) => {
 
   const onLoadCharacters = (offset, inst) => {
     inst ? setLoading(false) : setLoading(true);
-    getAllCharacters(offset).then((char) => {
-      onCharLoaded(char);
-      console.log(char);
-    });
+    getAllCharacters(offset)
+      .then((char) => {
+        onCharLoaded(char);
+      })
+      .then(() => setProcess("ready"));
   };
 
   const onCharLoaded = (newChar) => {
@@ -86,9 +110,9 @@ const CharList = ({ getCharId }) => {
     );
   };
 
-  const err = error ? <ErrorMessage /> : null;
-  const load = loader && !loading ? <Loader /> : null;
-  const content = !(err || load) ? renderCard(char) : null;
+  // const err = error ? <ErrorMessage /> : null;
+  // const load = loader && !loading ? <Loader /> : null;
+  // const content = !(err || load) ? renderCard(char) : null;
 
   return (
     <div
@@ -99,9 +123,10 @@ const CharList = ({ getCharId }) => {
         alignItems: "center",
       }}
     >
-      {err}
+      {finiteStateMashine(process, loading, () => renderCard(char))}
+      {/* {err}
       {load}
-      {content}
+      {content} */}
       <button
         className="button button__main button__long"
         onClick={() => onLoadCharacters(offset)}

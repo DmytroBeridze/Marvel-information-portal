@@ -3,7 +3,7 @@ import MarvelService from "../services/MarvelService";
 import { useEffect, useRef, useState } from "react";
 import "./findOneCharacterPage.scss";
 // ---------------перейменування змінної для зручності з comic в data
-const FindOneCharacterPage = ({ comic: data }) => {
+const FindOneCharacterPage = ({ data }) => {
   // const nodeRef = useRef(null);
 
   return (

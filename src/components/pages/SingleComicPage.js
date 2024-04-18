@@ -4,11 +4,21 @@ import { useEffect, useState } from "react";
 import MarvelService from "../services/MarvelService";
 import Loader from "../loader/Loader";
 import ErrorMessage from "../errorMessage/ErrorMessage";
+import finiteStateMashine from "../../utils/finiteStateMashine";
 
 const SingleComic = ({ Component, dataType }) => {
-  const [comic, setComic] = useState(null);
+  const [data, setData] = useState(null);
+  // const [comic, setComic] = useState(null);
   const { comicId, oneCharNameId } = useParams();
-  const { loader, error, clearError, getComic, getCharacter } = MarvelService();
+  const {
+    loader,
+    error,
+    clearError,
+    getComic,
+    getCharacter,
+    process,
+    setProcess,
+  } = MarvelService();
 
   useEffect(() => {
     onChangeComic();
@@ -17,29 +27,34 @@ const SingleComic = ({ Component, dataType }) => {
   const onChangeComic = () => {
     switch (dataType) {
       case "comics":
-        getComic(comicId).then(onSetComic);
+        getComic(comicId)
+          .then(onSetComic)
+          .then(() => setProcess("ready"));
         break;
       case "chatacter":
-        getCharacter(oneCharNameId).then(onSetComic);
+        getCharacter(oneCharNameId)
+          .then(onSetComic)
+          .then(() => setProcess("ready"));
         break;
     }
   };
 
-  const onSetComic = (comic) => {
-    setComic(comic);
+  const onSetComic = (data) => {
+    setData(data);
   };
 
-  const loading = loader ? <Loader /> : null;
-  const errorLoading = error ? <ErrorMessage /> : null;
-  const content = !(loading || errorLoading || !comic) ? (
-    <Component comic={comic} />
-  ) : null;
+  // const loading = loader ? <Loader /> : null;
+  // const errorLoading = error ? <ErrorMessage /> : null;
+  // const content = !(loading || errorLoading || !comic) ? (
+  //   <Component comic={comic} />
+  // ) : null;
 
   return (
     <>
-      {loading}
+      {finiteStateMashine(process, data, Component)}
+      {/* {loading}
       {errorLoading}
-      {content}
+      {content} */}
     </>
   );
 };

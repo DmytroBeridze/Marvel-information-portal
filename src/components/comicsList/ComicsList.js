@@ -5,13 +5,31 @@ import Loader from "../loader/Loader";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import { Link } from "react-router-dom";
 
+// finite-state machine
+const finiteStateMashine = (state, loading, Component) => {
+  switch (state) {
+    case "waiting":
+      return <Loader />;
+    case "loading":
+      return loading ? <Component /> : <Loader />;
+    case "error":
+      return <ErrorMessage />;
+    case "ready":
+      return <Component />;
+
+    default:
+      throw new Error("Wrong state");
+  }
+};
+
 const ComicsList = () => {
   const [char, setChar] = useState([]);
   const [offset, setOffset] = useState(210);
   // const [offset, setOffset] = useState(59423);
   const [newLoading, setNewLoading] = useState(false);
   const [comicsEnded, setcomicsEnded] = useState(false);
-  const { loader, error, clearError, getComics } = MarvelService();
+  const { loader, error, clearError, getComics, process, setProcess } =
+    MarvelService();
 
   useEffect(() => {
     onLoadCharacters(offset, true);
@@ -21,7 +39,9 @@ const ComicsList = () => {
     inst ? setNewLoading(false) : setNewLoading(true);
 
     clearError();
-    getComics(offset).then((comics) => setCharState(comics));
+    getComics(offset)
+      .then((comics) => setCharState(comics))
+      .then(() => setProcess("ready"));
   };
 
   const setCharState = (comics) => {
@@ -53,15 +73,17 @@ const ComicsList = () => {
     return <ul className="comics__grid">{element}</ul>;
   };
 
-  const errorLoading = error ? <ErrorMessage /> : null;
-  const spinner = loader && !newLoading ? <Loader /> : null;
-  const content = comicsElement();
+  // const errorLoading = error ? <ErrorMessage /> : null;
+  // const spinner = loader && !newLoading ? <Loader /> : null;
+  // const content = comicsElement();
 
   return (
     <div className="comics__list">
-      {errorLoading}
+      {finiteStateMashine(process, newLoading, comicsElement)}
+
+      {/* {errorLoading}
       {spinner}
-      {content}
+      {content} */}
 
       <button
         style={{ display: comicsEnded ? "none" : "block" }}

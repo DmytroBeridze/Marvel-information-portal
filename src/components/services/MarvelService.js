@@ -4,7 +4,7 @@ const MarvelService = () => {
   const _host = "https://gateway.marvel.com:443/v1/public/";
   const _apiKey = "de76fd2c658ceccbb74af7917c6a7df1";
 
-  const { request, loader, error, clearError } = useHttp();
+  const { request, loader, error, clearError, process, setProcess } = useHttp();
 
   const getAllCharacters = async (offset = 210) => {
     const res = await request(
@@ -87,6 +87,8 @@ const MarvelService = () => {
     getComics,
     getComic,
     findOneCharacterByName,
+    process,
+    setProcess,
   };
 };
 export default MarvelService;

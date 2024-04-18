@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
-const SingleComicPageElement = ({ comic }) => {
-  const { title, thumbnail, price, description, pageCount } = comic;
+const SingleComicPageElement = ({ data }) => {
+  const { title, thumbnail, price, description, pageCount } = data;
 
   return (
     <div className="single-comic">

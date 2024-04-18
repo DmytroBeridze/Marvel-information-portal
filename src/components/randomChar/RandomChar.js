@@ -2,12 +2,14 @@ import "./randomChar.scss";
 import mjolnir from "../../resources/img/mjolnir.png";
 import React, { useEffect, useState } from "react";
 import MarvelService from "../services/MarvelService";
-import Loader from "../loader/Loader";
-import ErrorMessage from "../errorMessage/ErrorMessage";
+// import Loader from "../loader/Loader";
+// import ErrorMessage from "../errorMessage/ErrorMessage";
+import finiteStateMashine from "../../utils/finiteStateMashine";
 
 const RandomChar = () => {
   const [char, setChar] = useState({});
-  const { loader, error, clearError, getCharacter } = MarvelService();
+  const { loader, error, clearError, getCharacter, process, setProcess } =
+    MarvelService();
 
   useEffect(() => {
     updateCharacter();
@@ -16,21 +18,24 @@ const RandomChar = () => {
   const updateCharacter = () => {
     clearError();
     const randomId = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-    getCharacter(randomId).then((char) => oncharLoaded(char));
+    getCharacter(randomId)
+      .then((char) => oncharLoaded(char))
+      .then(() => setProcess("ready"));
   };
   const oncharLoaded = (char) => {
     setChar(char);
   };
 
-  const errorMessage = error ? <ErrorMessage /> : null;
-  const spinner = loader ? <Loader /> : null;
-  const content = !(error || loader) ? <View char={char} /> : null;
+  // const errorMessage = error ? <ErrorMessage /> : null;
+  // const spinner = loader ? <Loader /> : null;
+  // const content = !(error || loader) ? <View char={char} /> : null;
 
   return (
     <div className="randomchar">
-      {errorMessage}
+      {finiteStateMashine(process, char, View)}
+      {/* {errorMessage}
       {spinner}
-      {content}
+      {content} */}
       <div className="randomchar__static">
         <p className="randomchar__title">
           Random character for today!
@@ -49,8 +54,8 @@ const RandomChar = () => {
   );
 };
 
-const View = ({ char }) => {
-  const { name, description, thumbnail, homepage, wiki } = char;
+const View = ({ data }) => {
+  const { name, description, thumbnail, homepage, wiki } = data;
 
   const imgStyle = () => {
     if (
